@@ -16,6 +16,16 @@ interface GeneratedContent {
     alt: string
     description: string
   }>
+  videos: Array<{
+    id: string
+    title: string
+    description: string
+    thumbnail: string
+    channelTitle: string
+    publishedAt: string
+    viewCount?: string
+    duration?: string
+  }>
   summary: string
 }
 
@@ -48,6 +58,25 @@ export default function ResultPage() {
 
     fetchContent()
   }, [topic])
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
+  }
+
+  const formatViewCount = (viewCount?: string) => {
+    if (!viewCount) return ''
+    const count = parseInt(viewCount)
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M views`
+    } else if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K views`
+    }
+    return `${count} views`
+  }
 
   if (error) {
     return (
@@ -106,6 +135,41 @@ export default function ResultPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* YouTube Videos */}
+            {content.videos && content.videos.length > 0 && (
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Related Videos</h2>
+                <div className="space-y-4">
+                  {content.videos.map((video, index) => (
+                    <div key={index} className="border rounded-lg overflow-hidden">
+                      <img 
+                        src={video.thumbnail} 
+                        alt={video.title}
+                        className="w-full h-32 object-cover"
+                      />
+                      <div className="p-3">
+                        <h3 className="font-medium text-gray-800 mb-1 line-clamp-2">
+                          <a 
+                            href={`https://www.youtube.com/watch?v=${video.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-primary-600 transition-colors"
+                          >
+                            {video.title}
+                          </a>
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-2">{video.channelTitle}</p>
+                        <div className="flex items-center justify-between text-xs text-gray-500">
+                          <span>{formatViewCount(video.viewCount)}</span>
+                          <span>{formatDate(video.publishedAt)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* References */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-xl font-bold text-gray-800 mb-4">References</h2>

@@ -7,4 +7,10 @@ export async function generateContent(topic: string) {
   })
   if (!res.ok) throw new Error('Failed to fetch generated content')
   return res.json()
+}
+
+export async function searchVideos(topic: string, maxResults: number = 5) {
+  const res = await fetch(`/api/videos?topic=${encodeURIComponent(topic)}&maxResults=${maxResults}`)
+  if (!res.ok) throw new Error('Failed to fetch videos')
+  return res.json()
 } 
