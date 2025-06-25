@@ -59,8 +59,8 @@ export async function searchVideos(query: string, maxResults: number = 5): Promi
       thumbnail: video.snippet?.thumbnails?.high?.url || video.snippet?.thumbnails?.medium?.url || '',
       channelTitle: video.snippet?.channelTitle || '',
       publishedAt: video.snippet?.publishedAt || '',
-      viewCount: video.statistics?.viewCount,
-      duration: video.contentDetails?.duration
+      viewCount: video.statistics?.viewCount || undefined,
+      duration: video.contentDetails?.duration || undefined
     }))
 
     return videos
