@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { searchVideos, YouTubeVideo } from '@/lib/youtube'
+import { fetchMultipleWikipediaSummaries, WikipediaSummary } from '@/lib/wikipedia'
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,6 +20,15 @@ export async function POST(req: NextRequest) {
     } catch (videoError) {
       console.error('Error fetching videos:', videoError)
       // Continue without videos if there's an error
+    }
+
+    // Fetch multiple Wikipedia summaries
+    let wikipediaData: WikipediaSummary[] = []
+    try {
+      wikipediaData = await fetchMultipleWikipediaSummaries(topic.trim(), 3) // Get 3 summaries
+    } catch (wikiError) {
+      console.error('Error fetching Wikipedia summaries:', wikiError)
+      // Continue without Wikipedia data if there's an error
     }
 
     // Dummy data structure with enhanced content
@@ -58,6 +68,12 @@ export async function POST(req: NextRequest) {
         publishedAt: video.publishedAt,
         viewCount: video.viewCount,
         duration: video.duration
+      })),
+      wikipedia: wikipediaData.map(summary => ({
+        title: summary.title,
+        summary: summary.summary,
+        url: summary.url,
+        thumbnail: summary.thumbnail
       }))
     }
 

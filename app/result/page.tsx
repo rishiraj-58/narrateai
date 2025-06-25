@@ -26,6 +26,12 @@ interface GeneratedContent {
     viewCount?: string
     duration?: string
   }>
+  wikipedia: Array<{
+    title: string
+    summary: string
+    url: string
+    thumbnail?: string
+  }>
   summary: string
 }
 
@@ -127,10 +133,64 @@ export default function ResultPage() {
             </div>
 
             {/* Summary */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Summary</h2>
               <p className="text-gray-700 leading-relaxed">{content.summary}</p>
             </div>
+
+            {/* Wikipedia Summaries - Horizontal Layout */}
+            {content.wikipedia && content.wikipedia.length > 0 && (
+              <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+                <div className="flex items-center mb-6">
+                  <svg className="w-6 h-6 text-gray-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                  <h2 className="text-2xl font-bold text-gray-800">Wikipedia Articles</h2>
+                </div>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {content.wikipedia.slice(0, 3).map((article, index) => (
+                    <div key={index} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                      {article.thumbnail && (
+                        <img 
+                          src={article.thumbnail} 
+                          alt={article.title}
+                          className="w-full h-32 object-cover"
+                        />
+                      )}
+                      <div className="p-4">
+                        <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2">
+                          <a 
+                            href={article.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-primary-600 transition-colors"
+                          >
+                            {article.title}
+                          </a>
+                        </h3>
+                        <p className="text-sm text-gray-600 leading-relaxed mb-3 line-clamp-4">
+                          {article.summary.length > 150 
+                            ? `${article.summary.substring(0, 150)}...`
+                            : article.summary
+                          }
+                        </p>
+                        <a 
+                          href={article.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-primary-600 hover:text-primary-700 text-sm font-medium"
+                        >
+                          Read full article
+                          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
